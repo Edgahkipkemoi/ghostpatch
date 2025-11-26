@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-ghost-border;
+  }
+  body {
+    @apply bg-ghost-bg text-gray-100;
+  }
+}
+
+@layer utilities {
+  .stitched-border {
+    border: 2px dashed theme('colors.ghost.green');
+    border-image: repeating-linear-gradient(
+      45deg,
+      theme('colors.ghost.green'),
+      theme('colors.ghost.green') 10px,
+      transparent 10px,
+      transparent 20px
+    ) 1;
+  }
+  
+  .glow-green {
+    box-shadow: 0 0 20px theme('colors.ghost.green');
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px theme('colors.ghost.green');
+  }
+}

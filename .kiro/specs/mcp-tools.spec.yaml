@@ -1,0 +1,111 @@
+name: MCP Tools for GhostPatch
+version: 1.0.0
+description: Custom Model Context Protocol tools for code analysis and transformation
+
+requirements:
+  - id: REQ-301
+    description: Language detection tool
+    priority: high
+    
+  - id: REQ-302
+    description: AST analysis tool
+    priority: high
+    
+  - id: REQ-303
+    description: Code stitching tool
+    priority: high
+    
+  - id: REQ-304
+    description: Sandbox execution tool
+    priority: high
+    
+  - id: REQ-305
+    description: Zip generation tool
+    priority: medium
+
+design:
+  tools:
+    detect_language:
+      name: detect_language
+      description: Detects programming language from code snippet
+      input:
+        code: string
+      output:
+        language: string
+        confidence: number
+        
+    analyze_ast:
+      name: analyze_ast
+      description: Parses code and returns AST breakdown
+      input:
+        code: string
+        language: string
+      output:
+        functions: array
+        types: array
+        imports: array
+        exports: array
+        
+    stitch_code:
+      name: stitch_code
+      description: Transforms multiple code sources into hybrid program
+      input:
+        code_blocks: array
+          - language: string
+            code: string
+            name: string
+        target_language: string (optional)
+      output:
+        stitched_code: object
+        glue_code: array
+        readme: string
+        
+    run_sandbox:
+      name: run_sandbox
+      description: Executes stitched code in safe environment
+      input:
+        code: string
+        language: string
+        timeout: number (default 5000ms)
+      output:
+        stdout: string
+        stderr: string
+        exit_code: number
+        
+    generate_zip:
+      name: generate_zip
+      description: Creates downloadable zip of stitched project
+      input:
+        project_structure: object
+        project_name: string
+      output:
+        zip_buffer: buffer
+        filename: string
+
+  mcp_server:
+    name: ghostpatch-mcp
+    command: node
+    args: [".kiro/mcp/server.js"]
+    env:
+      NODE_ENV: development
+
+tasks:
+  - id: TASK-301
+    description: Implement detect_language MCP tool
+    requirements: [REQ-301]
+    
+  - id: TASK-302
+    description: Implement analyze_ast MCP tool
+    requirements: [REQ-302]
+    
+  - id: TASK-303
+    description: Implement stitch_code MCP tool
+    requirements: [REQ-303]
+    
+  - id: TASK-304
+    description: Implement run_sandbox MCP tool
+    requirements: [REQ-304]
+    
+  - id: TASK-305
+    description: Implement generate_zip MCP tool
+    requirements: [REQ-305]

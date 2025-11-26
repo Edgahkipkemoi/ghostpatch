@@ -1,0 +1,13 @@
+{
+  "name": "On Stitch Complete",
+  "description": "Generates README and enables export after stitching",
+  "trigger": {
+    "type": "manual",
+    "label": "Finalize Project"
+  },
+  "action": {
+    "type": "message",
+    "content": "Stitching complete! Please:\n1. Generate comprehensive README explaining the hybrid code\n2. Create project structure documentation\n3. Enable zip export functionality\n4. Show success animation with lightning effect"
+  },
+  "enabled": true
+}

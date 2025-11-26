@@ -1,0 +1,13 @@
+{
+  "name": "On UI Build",
+  "description": "Applies Frankenstein theme during UI component generation",
+  "trigger": {
+    "type": "manual",
+    "label": "Apply Spooky Theme"
+  },
+  "action": {
+    "type": "message",
+    "content": "Building UI components. Remember to:\n1. Use green/black color scheme (#00ff41, #0a0e0a)\n2. Add stitched border effects\n3. Include lightning spark animations\n4. Apply Frankenstein-inspired styling\n5. Ensure all components match the spooky theme"
+  },
+  "enabled": true
+}

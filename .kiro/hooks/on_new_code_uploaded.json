@@ -1,0 +1,13 @@
+{
+  "name": "On New Code Uploaded",
+  "description": "Triggers analysis and stitching when user uploads new code",
+  "trigger": {
+    "type": "manual",
+    "label": "Analyze Code"
+  },
+  "action": {
+    "type": "message",
+    "content": "New code has been uploaded. Please:\n1. Detect the language of each code block\n2. Run AST analysis on all blocks\n3. Generate compatibility map\n4. Prepare for stitching"
+  },
+  "enabled": true
+}

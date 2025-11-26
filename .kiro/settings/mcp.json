@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "ghostpatch": {
+      "command": "node",
+      "args": [".kiro/mcp/server.js"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "detect_language",
+        "analyze_ast",
+        "stitch_code"
+      ]
+    }
+  }
+}

@@ -1,0 +1,123 @@
+name: Spooky UI Theme System
+version: 1.0.0
+description: Frankenstein-inspired dark UI with green neon glow and stitched elements
+
+requirements:
+  - id: REQ-201
+    description: Dark theme with green/black color scheme
+    priority: high
+    
+  - id: REQ-202
+    description: Stitched border effects on components
+    priority: high
+    
+  - id: REQ-203
+    description: Lightning spark animations
+    priority: medium
+    
+  - id: REQ-204
+    description: Code editor with syntax highlighting
+    priority: high
+    
+  - id: REQ-205
+    description: Animated transitions for code stitching process
+    priority: medium
+    
+  - id: REQ-206
+    description: Responsive layout for mobile and desktop
+    priority: high
+
+design:
+  color_palette:
+    primary: "#00ff41"        # Matrix green
+    secondary: "#0a0e0a"      # Deep black
+    accent: "#39ff14"         # Neon green
+    danger: "#ff0000"         # Blood red
+    warning: "#ffaa00"        # Electric orange
+    background: "#0d1117"     # GitHub dark
+    surface: "#161b22"        # Card background
+    border: "#30363d"         # Subtle border
+    text_primary: "#c9d1d9"   # Light gray
+    text_secondary: "#8b949e" # Muted gray
+
+  components:
+    code_editor:
+      library: monaco-editor or CodeMirror
+      theme: custom Frankenstein theme
+      features:
+        - Multi-language support
+        - Line numbers
+        - Syntax highlighting
+        
+    upload_zone:
+      style: Dashed stitched border
+      hover: Green glow effect
+      
+    stitch_button:
+      style: Large with lightning bolt icon
+      animation: Electric pulse on hover
+      
+    output_panel:
+      style: Terminal-like with green text
+      animation: Typewriter effect for logs
+      
+    compatibility_map:
+      style: Node graph with connecting lines
+      animation: Sparks traveling along connections
+
+  animations:
+    lightning_spark:
+      trigger: On stitch complete
+      duration: 0.5s
+      effect: SVG lightning bolt from top to bottom
+      
+    code_reveal:
+      trigger: On analysis complete
+      duration: 1s
+      effect: Fade in with slight shake
+      
+    stitching_progress:
+      trigger: During stitching
+      duration: variable
+      effect: Progress bar with electric pulse
+
+  layout:
+    header:
+      - Logo with lightning bolt
+      - Navigation
+      - Theme toggle (if needed)
+      
+    main:
+      - Code input section (left)
+      - Compatibility map (center)
+      - Output section (right)
+      
+    footer:
+      - Export button
+      - Credits
+      - Kiroween badge
+
+tasks:
+  - id: TASK-201
+    description: Set up TailwindCSS with custom Frankenstein theme
+    requirements: [REQ-201]
+    
+  - id: TASK-202
+    description: Create stitched border component
+    requirements: [REQ-202]
+    
+  - id: TASK-203
+    description: Implement lightning spark SVG animation
+    requirements: [REQ-203]
+    
+  - id: TASK-204
+    description: Integrate code editor with syntax highlighting
+    requirements: [REQ-204]
+    
+  - id: TASK-205
+    description: Build stitching animation system
+    requirements: [REQ-205]
+    
+  - id: TASK-206
+    description: Make layout responsive
+    requirements: [REQ-206]

@@ -1,0 +1,13 @@
+{
+  "name": "On Analysis Success",
+  "description": "Generates compatibility map after successful code analysis",
+  "trigger": {
+    "type": "manual",
+    "label": "Generate Compatibility Map"
+  },
+  "action": {
+    "type": "message",
+    "content": "Analysis complete. Please:\n1. Generate compatibility map showing which functions can interact\n2. Identify potential conflicts\n3. Suggest optimal stitching strategy\n4. Display results in the UI"
+  },
+  "enabled": true
+}

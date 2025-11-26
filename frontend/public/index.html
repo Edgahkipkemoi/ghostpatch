@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧟 GhostPatch - Frankenstein Code Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0d1117;
+            color: #00ff41;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Courier New', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .header {
+            background: #161b22;
+            border-bottom: 2px solid #00ff41;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        @media (max-width: 768px) {
+            .header { 
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+        }
+        .title { 
+            font-size: 2rem; 
+            font-weight: bold; 
+            text-shadow: 0 0 10px #00ff41;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .subtitle { 
+            color: #8b949e; 
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        @media (max-width: 768px) {
+            .title { font-size: 1.5rem; }
+            .subtitle { font-size: 0.8rem; }
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 2rem; 
+        }
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 2rem; 
+        }
+        @media (max-width: 1024px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .section { 
+            background: #161b22; 
+            border: 2px solid #00ff41; 
+            padding: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        .section:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.5);
+            transition: box-shadow 0.3s ease;
+        }
+        .section-title { font-size: 1.5rem; margin-bottom: 1rem; text-shadow: 0 0 5px #00ff41; }
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #0d1117;
+            color: #00ff41;
+            border: 1px solid #30363d;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            textarea { height: 150px; font-size: 12px; }
+        }
+        input, select {
+            background: #0d1117;
+            color: #00ff41;
+            border: 1px solid #30363d;
+            padding: 0.75rem;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.1);
+        }
+        .search-input {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        select {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        @media (max-width: 768px) {
+            input, select { padding: 0.5rem; font-size: 13px; }
+        }
+        .lang-option {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+        .lang-option:hover {
+            background: #30363d;
+        }
+        .lang-category {
+            color: #8b949e;
+            font-size: 0.85rem;
+            padding: 0.25rem 0.5rem;
+            background: #0a0e0a;
+        }
+        .example-btn {
+            font-size: 0.85rem !important;
+            padding: 0.6rem 0.8rem !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 768px) {
+            .example-btn {
+                font-size: 0.75rem !important;
+                padding: 0.5rem !important;
+            }
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Better select styling */
+        select option {
+            padding: 0.5rem;
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+        button {
+            background: #00ff41;
+            color: #0a0e0a;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        button:hover { 
+            background: #39ff14; 
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        button:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        @media (max-width: 768px) {
+            button { 
+                padding: 0.6rem 1rem; 
+                font-size: 12px;
+                margin: 0.25rem;
+            }
+        }
+        .output { 
+            background: #0d1117; 
+            padding: 1rem; 
+            border: 1px solid #30363d; 
+            margin-top: 1rem; 
+            min-height: 500px;
+            max-height: 700px; 
+            overflow-y: auto; 
+        }
+        @media (max-width: 768px) {
+            .output { min-height: 400px; max-height: 600px; }
+        }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .success { color: #00ff41; }
+        .error { color: #ff0000; }
+        .warning { color: #ffaa00; }
+        .flex { 
+            display: flex; 
+            gap: 0.5rem; 
+            align-items: center; 
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 768px) {
+            .flex { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <div class="title">🧟 GhostPatch</div>
+            <div class="subtitle">The Frankenstein Hybrid Code Generator</div>
+        </div>
+        <div class="pulse" style="font-size: 2rem;">⚡</div>
+    </div>
+
+    <div class="container">
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <div class="section-title">🧪 Code Specimens</div>
+                    
+                    <div class="code-block">
+                        <div class="flex">
+                            <input type="text" id="name1" value="module1" placeholder="Module name" style="flex: 1;">
+                            <select id="lang1" style="width: 100%;" onchange="updateLanguageDisplay(1)">
+                                <optgroup label="🔥 Popular">
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="typescript">TypeScript</option>
+                                    <option value="java">Java</option>
+                                </optgroup>
+                                <optgroup label="⚙️ Systems">
+                                    <option value="cpp">C++</option>
+                                    <option value="c">C</option>
+                                    <option value="rust">Rust</option>
+                                    <option value="go">Go</option>
+                                </optgroup>
+                                <optgroup label="🏢 Enterprise">
+                                    <option value="csharp">C#</option>
+                                    <option value="fsharp">F#</option>
+                                    <option value="vbnet">VB.NET</option>
+                                    <option value="scala">Scala</option>
+                                </optgroup>
+                                <optgroup label="📱 Mobile">
+                                    <option value="swift">Swift</option>
+                                    <option value="kotlin">Kotlin</option>
+                                    <option value="dart">Dart</option>
+                                    <option value="objectivec">Objective-C</option>
+                                </optgroup>
+                                <optgroup label="🌐 Web">
+                                    <option value="php">PHP</option>
+                                    <option value="ruby">Ruby</option>
+                                    <option value="perl">Perl</option>
+                                </optgroup>
+                                <optgroup label="🧮 Functional">
+                                    <option value="haskell">Haskell</option>
+                                    <option value="elixir">Elixir</option>
+                                    <option value="erlang">Erlang</option>
+                                    <option value="clojure">Clojure</option>
+                                </optgroup>
+                                <optgroup label="📜 Scripting">
+                                    <option value="lua">Lua</option>
+                                    <option value="r">R</option>
+                                    <option value="julia">Julia</option>
+                                    <option value="bash">Bash</option>
+                                    <option value="powershell">PowerShell</option>
+                                </optgroup>
+                                <optgroup label="💾 Data">
+                                    <option value="sql">SQL</option>
+                                    <option value="graphql">GraphQL</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <textarea id="code1" placeholder="Enter code here...">function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+function calculate(a, b) {
+  return a + b;
+}</textarea>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="flex">
+                            <input type="text" id="name2" value="module2" placeholder="Module name" style="flex: 1;">
+                            <select id="lang2" style="width: 100%;" onchange="updateLanguageDisplay(2)">
+                                <optgroup label="🔥 Popular">
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python" selected>Python</option>
+                                    <option value="typescript">TypeScript</option>
+                                    <option value="java">Java</option>
+                                </optgroup>
+                                <optgroup label="⚙️ Systems">
+                                    <option value="cpp">C++</option>
+                                    <option value="c">C</option>
+                                    <option value="rust">Rust</option>
+                                    <option value="go">Go</option>
+                                </optgroup>
+                                <optgroup label="🏢 Enterprise">
+                                    <option value="csharp">C#</option>
+                                    <option value="fsharp">F#</option>
+                                    <option value="vbnet">VB.NET</option>
+                                    <option value="scala">Scala</option>
+                                </optgroup>
+                                <optgroup label="📱 Mobile">
+                                    <option value="swift">Swift</option>
+                                    <option value="kotlin">Kotlin</option>
+                                    <option value="dart">Dart</option>
+                                    <option value="objectivec">Objective-C</option>
+                                </optgroup>
+                                <optgroup label="🌐 Web">
+                                    <option value="php">PHP</option>
+                                    <option value="ruby">Ruby</option>
+                                    <option value="perl">Perl</option>
+                                </optgroup>
+                                <optgroup label="🧮 Functional">
+                                    <option value="haskell">Haskell</option>
+                                    <option value="elixir">Elixir</option>
+                                    <option value="erlang">Erlang</option>
+                                    <option value="clojure">Clojure</option>
+                                </optgroup>
+                                <optgroup label="📜 Scripting">
+                                    <option value="lua">Lua</option>
+                                    <option value="r">R</option>
+                                    <option value="julia">Julia</option>
+                                    <option value="bash">Bash</option>
+                                    <option value="powershell">PowerShell</option>
+                                </optgroup>
+                                <optgroup label="💾 Data">
+                                    <option value="sql">SQL</option>
+                                    <option value="graphql">GraphQL</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <textarea id="code2" placeholder="Enter code here...">def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+def process_numbers(numbers):
+    return [factorial(n) for n in numbers]</textarea>
+                    </div>
+
+                    <div>
+                        <button onclick="analyzeCode()">🔬 Analyze Code</button>
+                        <button onclick="stitchCode()" id="stitchBtn" disabled>⚡ Stitch Together</button>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #30363d;">
+                        <div style="font-size: 0.9rem; margin-bottom: 0.75rem; color: #8b949e; font-weight: bold;">📚 Quick Examples:</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem;">
+                            <button onclick="loadExample('java-ts')" class="example-btn">☕ Java + TS</button>
+                            <button onclick="loadExample('cpp-python')" class="example-btn">⚡ C++ + Python</button>
+                            <button onclick="loadExample('rust-js')" class="example-btn">🦀 Rust + JS</button>
+                            <button onclick="loadExample('swift-kotlin')" class="example-btn">📱 Swift + Kotlin</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <div class="section-title">🔬 Laboratory Results</div>
+                    <div id="output" class="output">
+                        <div style="text-align: center; padding: 2rem; color: #8b949e;">
+                            <div style="font-size: 3rem;">⚗️</div>
+                            <p>Awaiting specimens for analysis...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        let analysisResults = null;
+        
+        const examples = {
+            'java-ts': {
+                code1: `public class UserService {\n    public String getUser(int id) {\n        return "User" + id;\n    }\n    \n    public boolean validate(String email) {\n        return email.contains("@");\n    }\n}`,
+                lang1: 'java',
+                name1: 'UserService',
+                code2: `interface User {\n    id: number;\n    name: string;\n}\n\nasync function fetchUser(id: number): Promise<User> {\n    const res = await fetch(\`/api/users/\${id}\`);\n    return res.json();\n}`,
+                lang2: 'typescript',
+                name2: 'UserClient'
+            },
+            'cpp-python': {
+                code1: `#include <vector>\n\nclass ImageProcessor {\npublic:\n    std::vector<int> process(const std::vector<int>& pixels) {\n        std::vector<int> result;\n        for (int p : pixels) result.push_back(p * 2);\n        return result;\n    }\n};`,
+                lang1: 'cpp',
+                name1: 'ImageProcessor',
+                code2: `import numpy as np\n\ndef predict_class(processed_pixels):\n    features = np.array(processed_pixels)\n    prediction = model.predict(features)\n    return prediction[0]\n\ndef train_model(data, labels):\n    model.fit(data, labels)\n    return model`,
+                lang2: 'python',
+                name2: 'MLModel'
+            },
+            'rust-js': {
+                code1: `pub fn calculate_prime(n: u32) -> bool {\n    if n <= 1 { return false; }\n    for i in 2..=(n as f64).sqrt() as u32 {\n        if n % i == 0 { return false; }\n    }\n    true\n}\n\npub fn find_primes(limit: u32) -> Vec<u32> {\n    (2..=limit).filter(|&n| calculate_prime(n)).collect()\n}`,
+                lang1: 'rust',
+                name1: 'PrimeCalculator',
+                code2: `function displayPrimes(primes) {\n    console.log(\`Found \${primes.length} primes\`);\n    return primes;\n}\n\nasync function main() {\n    const primes = await findPrimes(1000);\n    displayPrimes(primes);\n}`,
+                lang2: 'javascript',
+                name2: 'PrimeDisplay'
+            },
+            'swift-kotlin': {
+                code1: `struct User {\n    let id: Int\n    let name: String\n}\n\nfunc validateUser(email: String) -> Bool {\n    return email.contains("@")\n}\n\nfunc getUsers() -> [User] {\n    return [User(id: 1, name: "John")]\n}`,
+                lang1: 'swift',
+                name1: 'UserService',
+                code2: `data class User(val id: Int, val name: String)\n\nfun validateUser(email: String): Boolean {\n    return email.contains("@")\n}\n\nfun getUsers(): List<User> {\n    return listOf(User(1, "John"))\n}`,
+                lang2: 'kotlin',
+                name2: 'UserService'
+            }
+        };
+        
+        function loadExample(exampleKey) {
+            const ex = examples[exampleKey];
+            if (!ex) return;
+            
+            document.getElementById('code1').value = ex.code1;
+            document.getElementById('lang1').value = ex.lang1;
+            document.getElementById('name1').value = ex.name1;
+            document.getElementById('code2').value = ex.code2;
+            document.getElementById('lang2').value = ex.lang2;
+            document.getElementById('name2').value = ex.name2;
+            
+            document.getElementById('output').innerHTML = '<div class="success">✅ Example loaded! Click "🔬 Analyze Code" to begin.</div>';
+        }
+        
+        function updateLanguageDisplay(num) {
+            const select = document.getElementById(`lang${num}`);
+            const selectedOption = select.options[select.selectedIndex];
+            console.log(`Language ${num} changed to:`, selectedOption.value);
+        }
+
+        async function analyzeCode() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<div class="pulse">🔬 Examining the specimens...</div>';
+
+            try {
+                const blocks = [
+                    { code: document.getElementById('code1').value, language: document.getElementById('lang1').value, name: document.getElementById('name1').value },
+                    { code: document.getElementById('code2').value, language: document.getElementById('lang2').value, name: document.getElementById('name2').value }
+                ];
+
+                const results = await Promise.all(blocks.map(async (block) => {
+                    const res = await fetch(`${API_URL}/api/analysis/ast`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: block.code, language: block.language })
+                    });
+                    return res.json();
+                }));
+
+                analysisResults = results;
+                document.getElementById('stitchBtn').disabled = false;
+
+                let html = '<div class="success">📊 Analysis Results</div><br>';
+                results.forEach((result, idx) => {
+                    html += `<div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid #30363d;">
+                        <div><strong>Module ${idx + 1}:</strong> ${result.language}</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem;">
+                            Functions: ${result.functions?.length || 0} | 
+                            Imports: ${result.imports?.length || 0} | 
+                            Exports: ${result.exports?.length || 0}
+                        </div>`;
+                    
+                    if (result.functions && result.functions.length > 0) {
+                        html += '<div style="margin-top: 0.5rem; font-size: 0.85rem;">Detected functions:</div>';
+                        result.functions.forEach(fn => {
+                            html += `<div style="margin-left: 1rem; font-size: 0.85rem;">• ${fn.name}(${fn.params.join(', ')})</div>`;
+                        });
+                    }
+                    html += '</div>';
+                });
+
+                output.innerHTML = html;
+            } catch (error) {
+                output.innerHTML = `<div class="error">⚡ The lightning strike failed! ${error.message}</div>`;
+            }
+        }
+
+        async function stitchCode() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<div class="pulse">🧵 Stitching the pieces together...</div>';
+
+            try {
+                const codeBlocks = [
+                    { code: document.getElementById('code1').value, language: document.getElementById('lang1').value, name: document.getElementById('name1').value },
+                    { code: document.getElementById('code2').value, language: document.getElementById('lang2').value, name: document.getElementById('name2').value }
+                ];
+
+                const res = await fetch(`${API_URL}/api/stitch/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codeBlocks, targetLanguage: 'javascript' })
+                });
+
+                const result = await res.json();
+
+                let html = `<div class="success pulse">⚡ ${result.message}</div><br>`;
+                html += `<div style="padding: 0.5rem; border: 1px solid #30363d;">
+                    <div><strong>Bridge Type:</strong> ${result.bridgeType}</div>
+                    <div><strong>Files Generated:</strong> ${Object.keys(result.stitchedCode || {}).length}</div>
+                    <div><strong>Glue Code:</strong> ${result.glueCode?.length || 0} bridges</div>
+                </div>`;
+
+                if (result.compatibility) {
+                    html += '<div style="margin-top: 1rem; padding: 0.5rem; border: 1px solid #30363d;">';
+                    html += '<div><strong>🧵 Compatibility:</strong></div>';
+                    if (result.compatibility.warnings && result.compatibility.warnings.length > 0) {
+                        result.compatibility.warnings.forEach(w => {
+                            html += `<div class="warning">⚠️ ${w}</div>`;
+                        });
+                    }
+                    if (result.compatibility.canStitch) {
+                        html += '<div class="success">✅ All stitches secure!</div>';
+                    }
+                    html += '</div>';
+                }
+
+                html += '<div style="margin-top: 1rem;"><strong>Generated Files:</strong></div>';
+                html += '<div style="max-height: 200px; overflow-y: auto; font-size: 0.85rem;">';
+                for (const [path, content] of Object.entries(result.stitchedCode || {})) {
+                    html += `<div style="margin: 0.5rem 0; padding: 0.5rem; background: #0a0e0a;">
+                        <div style="color: #39ff14;">${path}</div>
+                        <pre style="margin-top: 0.5rem; font-size: 0.75rem; overflow-x: auto;">${content.substring(0, 200)}${content.length > 200 ? '...' : ''}</pre>
+                    </div>`;
+                }
+                html += '</div>';
+
+                output.innerHTML = html;
+            } catch (error) {
+                output.innerHTML = `<div class="error">🔩 The stitches won't hold! ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
