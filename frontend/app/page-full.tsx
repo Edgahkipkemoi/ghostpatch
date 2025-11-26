@@ -7,8 +7,8 @@ import Header from './components/Header';
 
 export default function Home() {
   const [codeBlocks, setCodeBlocks] = useState([{ id: 1, code: '', language: 'javascript', name: 'module1' }]);
-  const [analysis, setAnalysis] = useState(null);
-  const [stitchResult, setStitchResult] = useState(null);
+  const [analysis, setAnalysis] = useState<any[] | null>(null);
+  const [stitchResult, setStitchResult] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
 
   const addCodeBlock = () => {
